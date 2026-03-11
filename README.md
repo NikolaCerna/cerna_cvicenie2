@@ -1,255 +1,280 @@
-# Laravel Controllers & REST API – cvičenie
+# Notes REST API – Laravel
+
+## Získanie všetkých poznámok
+
+**URI**
+
+```
+http://localhost:8000/api/notes
+```
+
+![GET notes](images/get_note_index.png)
 
 ---
 
-# Controllers & REST API – Laravel
+## Získanie jednej poznámky
 
-Projekt demonštruje rôzne typy controllerov v Laraveli:
-- RPC controller
-- Single Action Controller
-- REST controller
-- REST API controller
+**URI**
 
-Endpointy boli testované pomocou nástroja Postman.
+```
+http://localhost:8000/api/notes/{id}
+```
+
+Príklad:
+
+```
+http://localhost:8000/api/notes/2
+```
+
+![GET note](images/get_note_show.png)
 
 ---
 
-## 1. RPC Controller `BookRpcController`
+## Vytvorenie novej poznámky
 
-
-### POST /rpc/books/{id}/borrow
-
-**Popis:** Požičanie knihy podľa ID.
+**URI**
 
 ```
-http://localhost:8000/api/rpc/books/1/borrow?user_id=5
+http://localhost:8000/api/notes
 ```
 
-![Borrow book](images/rpc_post_borrowBook.png)
+**Body**
+
+```json
+{
+  "user_id": 2,
+  "title": "Moja prvá poznámka",
+  "body": "Toto je obsah poznámky."
+}
+```
+
+![POST note](images/post_note_store.png)
 
 ---
 
-### POST /rpc/books/{id}/return
+## Aktualizácia poznámky
 
-**Popis:** Vrátenie knihy podľa ID.
+**URI**
+
 ```
-http://localhost:8000/api/rpc/books/1/return?condition=dobrá
+http://localhost:8000/api/notes/{id}
 ```
-![Return book](images/rpc_post_returnBook.png)
+
+Príklad:
+
+```
+http://localhost:8000/api/notes/4
+```
+
+**Body**
+
+```json
+{
+  "title": "Nový názov poznámky",
+  "body": "Toto je upravený obsah poznámky."
+}
+```
+
+![PUT note](images/put_note_update.png)
 
 ---
 
-## 2. SAC Controller `BookSacController`
+## Odstránenie poznámky (soft delete)
 
-### GET /sac/books/{id}
-
-**Popis:** Zobrazenie knihy podľa ID pomocou Single Action Controller.
+**URI**
 
 ```
-http://localhost:8000/api/sac/books/1?format=A4
+http://localhost:8000/api/notes/{id}
 ```
 
-![Invoke book](images/sac_get_invoke.png)
+Príklad:
+
+```
+http://localhost:8000/api/notes/4
+```
+
+![DELETE note](images/delete_note_destroy.png)
 
 ---
 
-## 3. REST Controller `BookRestController`
+# Vlastné endpointy
 
-### GET /rest/books
+## Vyhľadávanie poznámok
 
-**Popis:** Získanie zoznamu všetkých kníh.
+Vyhľadáva poznámky podľa textu v **title** alebo **body**.
+
+**URI**
 
 ```
-http://localhost:8000/api/rest/books
+http://localhost:8000/api/notes-actions/search?q=Laravel
 ```
 
-![REST index](images/rest_get_index.png)
+![Search](images/get_note_search.png)
 
 ---
 
-### GET /rest/books/create
+## Štatistika podľa statusu
 
-**Popis:** Zobrazenie formulára na vytvorenie novej knihy.
+**URI**
 
 ```
-http://localhost:8000/api/rest/books/create
+http://localhost:8000/api/notes/stats/status
 ```
 
-![REST create](images/rest_get_create.png)
+![Stats](images/get_note_statsbystatus.png)
 
 ---
 
-### GET /rest/books/{id}
+## Archivovanie starých draftov
 
-**Popis:** Zobrazenie detailu knihy podľa ID.
+**URI**
 
 ```
-http://localhost:8000/api/rest/books/5
+http://localhost:8000/api/notes/actions/archive-old-drafts
 ```
 
-![REST show](images/rest_get_show.png)
+![Archive drafts](images/patch_note_archiveolddrafts.png)
 
 ---
 
-### POST /rest/books
+## Poznámky používateľa s kategóriami
 
-**Popis:** Vytvorenie novej knihy.
+**URI**
 
 ```
-http://localhost:8000/api/rest/books?title=Dobrodružstvá
+http://localhost:8000/api/users/{user}/notes
 ```
 
-![REST store](images/rest_post_store.png)
+Príklad:
+
+```
+http://localhost:8000/api/users/2/notes
+```
+
+![User notes](images/get_note_usernoteswithcategories.png)
 
 ---
 
-### PUT /rest/books/{id}
+## Vlastný endpoint – pinned notes
 
-**Popis:** Aktualizácia existujúcej knihy.
+Endpoint vracia všetky pripnuté poznámky (`is_pinned = true`).
+
+**URI**
 
 ```
-http://localhost:8000/api/rest/books/7?title=Piesne&author=Karol Pečienka
+http://localhost:8000/api/notes/actions/pinned
 ```
 
-![REST update](images/rest_put_update.png)
+![Pinned notes](images/get_note_pinnednotes.png)
 
 ---
 
-### DELETE /rest/books/{id}
+# Categories REST API – Laravel
 
-**Popis:** Zmazanie knihy podľa ID.
+## Získanie všetkých kategórií
+
+**URI**
 
 ```
-http://localhost:8000/api/rest/books/8
+http://localhost:8000/api/categories
 ```
 
-![REST delete](images/rest_delete_destroy.png)
+![GET categories](images/get_categories_index.png)
 
 ---
 
-### GET /rest/books/{id}/edit
+## Získanie jednej kategórie
 
-**Popis:** Zobrazenie formulára na úpravu knihy.
-
-```
-http://localhost:8000/api/rest/books/2/edit
-```
-
-![REST edit](images/rest_get_edit.png)
----
-## 4. REST API Controller `BookApiController`
-
-### GET /restapi/books
-
-**Popis:** Získanie zoznamu všetkých kníh vo formáte JSON.
+**URI**
 
 ```
-http://localhost:8000/api/restapi/books
+http://localhost:8000/api/categories/{id}
 ```
 
-![REST API index](images/restapi_get_index.png)
+Príklad:
+
+```
+http://localhost:8000/api/categories/8
+```
+
+![GET category](images/get_category_show.png)
 
 ---
 
-### GET /restapi/books/{id}
+## Vytvorenie novej kategórie
 
-**Popis:** Zobrazenie detailu knihy.
+**URI**
 
 ```
-http://localhost:8000/api/restapi/books/2
+http://localhost:8000/api/categories
 ```
 
-![REST API show](images/restapi_get_show.png)
+**Body**
+
+```json
+{
+  "name": "Nová kategória"
+}
+```
+
+![POST category](images/post_categories_store.png)
 
 ---
 
-### POST /restapi/books
+## Aktualizácia kategórie
 
-**Popis:** Vytvorenie novej knihy cez REST API.
+**URI**
 
 ```
-http://localhost:8000/api/restapi/books?title=Dobrodružstvá&author=Karel Čapek
+http://localhost:8000/api/categories/{id}
 ```
 
-![REST API store](images/restapi_post_store.png)
+Príklad:
+
+```
+http://localhost:8000/api/categories/2
+```
+
+**Body**
+
+```json
+{
+  "name": "school"
+}
+```
+
+![PUT category](images/put_categories_update.png)
 
 ---
 
-### PUT /restapi/books/{id}
+## Odstránenie kategórie
 
-**Popis:** Aktualizácia existujúcej knihy.
+**URI**
 
 ```
-http://localhost:8000/api/restapi/books/2?title=Ano&author=Milan Rúfus
+http://localhost:8000/api/categories/{id}
 ```
 
-![REST API update](images/restapi_put_update.png)
+Príklad:
+
+```
+http://localhost:8000/api/categories/6
+```
+
+![DELETE category](images/delete_categories_destroy.png)
 
 ---
 
-### DELETE /restapi/books/{id}
-
-**Popis:** Zmazanie knihy podľa ID.
-
-```
-http://localhost:8000/api/restapi/books/2
-```
-
-![REST API delete](images/restapi_delete_destroy.png)
 
 ---
 
-## Testovanie
+# Testovanie API
 
-Všetky endpointy boli testované pomocou nástroja **Postman**.
-
-Screenshoty obsahujú:
-- HTTP metódu
-- URL endpointu
-- telo požiadavky (ak existuje)
-- odpoveď servera
-- HTTP status kód
+API bolo testované pomocou nástroja **Postman**.
+Každý endpoint bol overený pomocou HTTP requestov a odpovedí vo formáte **JSON**.
 
 ---
 
-# Úloha – Koľko je hodín?
+# Autor
 
-Cieľom úlohy bolo vytvoriť dva rôzne controllery, ktoré spracujú požiadavku na získanie aktuálneho času.
-
-Použité boli:
-
-- REST API Controller
-- RPC Controller
-- vlastná služba **TimeService**
-- Dependency Injection
-
-Aplikácia vracia aktuálny dátum a čas vo formáte: Y-m-d H:i:s
-
-## 1. REST API Controller `TimeApiController`
-
-### GET /restapi/time
-
-**Popis:** Vracia aktuálny čas v JSON formáte.
-
-```
-http://localhost:8000/api/restapi/time
-```
-
-![REST API index](images/time_restapi_get_index.png)
-
----
-
-## 2. RPC Controller `TimeRpcController`
-
-
-### GET /rpc/time
-
-**Popis:** Vracia aktuálny čas ako plaintext odpoveď.
-
-```
-http://localhost:8000/api/rpc/time
-```
-
-![Get_time](images/rpc_get_time.png)
-
----
+Nikola Černá
