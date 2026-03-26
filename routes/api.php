@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\CategoryApiController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('notes', NoteController::class);
 Route::apiResource('categories', CategoryApiController::class);
-
+Route::apiResource('notes.tasks', TaskController::class);
 
 Route::get('notes/stats/status', [NoteController::class, 'statsByStatus']);
 
