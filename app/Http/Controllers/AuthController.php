@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validated = request()->validate([
+        $validated = $request->validate([
             'first_name' => ['required', 'string', 'min:2', 'max:128'],
             'last_name' => ['required', 'string', 'min:2', 'max:128'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
@@ -76,7 +76,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Používateľ bol odhlásený zo všetkých zariadení.'
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function changePassword(Request $request)
@@ -91,7 +91,7 @@ class AuthController extends Controller
         if (!Hash::check($validated['current_password'], $user->password)) {
             return response()->json([
                 'message' => 'Aktuálne heslo nie je správne.'
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $user->update([
